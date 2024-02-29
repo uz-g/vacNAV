@@ -16,23 +16,35 @@ model = whisper.load_model("tiny.en").to(device)
 
 
 
-# Transcribe the prompt audio
-result = model.transcribe("whatIsATree.wav", fp16=False)
+def record_and_transcribe():
+    """Records audio from the microphone and returns the transcribed text."""
+    recognizer = sr.Recognizer()
+    with sr.Microphone() as source:
+        print("Speak your question:")
+        audio = recognizer.listen(source, timeout=3)  # Wait for 3 seconds for input
 
-# print(result)
 
-# Extract the prompt from the result
-prompt = result['text']
+    try:
+        # Perform speech recognition
+        text = recognizer.recognize_google(audio)
+        print("You said:", text)
+        return text
+    except sr.UnknownValueError:
+        print("Could not understand audio")
+        return None  # Indicate failed transcription
 
+def interact_with_mistral(prompt):
+    """Sends the prompt to Mistral AI and prints the responses."""
+    if prompt:
+        stream = ollama.chat(
+            model="mistral", messages=[{'role': 'user', 'content': prompt}], stream=True
+        )
+        for chunk in stream:
+            print(chunk['message']['content'], end='', flush=True)
+    else:
+        print("No text to send to Mistral AI.")
 
-# Give the prompt to the model
-stream = ollama.chat(
-    model="mistral",
-    messages=[{'role': 'user', 'content': prompt}],
-    stream=True,
-)
-
-# Print the response
-for chunk in stream:
-    print(chunk['message']['content'], end='', flush=True)
-
+# Main program loop
+while True:
+    prompt = record_and_transcribe()
+    interact_with_mistral(prompt)
