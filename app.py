@@ -36,8 +36,8 @@ def record_and_transcribe():
         print("You said:", text)
         #if the text is = to exit or cancel or quit (not case sensitive) then exit the program
         if text.lower() == "exit" or text.lower() == "cancel" or text.lower() == "quit":
-            print("Exiting program")
-            sys.exit()
+            print("Exiting app...")
+            quit()
         
         return text
     except sr.UnknownValueError:
