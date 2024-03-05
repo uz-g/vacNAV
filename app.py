@@ -3,7 +3,14 @@ import whisper
 import torch
 import speech_recognition as sr
 import torchaudio
+import pyttsx3
+import pyaudio
+import pyautogui
 import sys
+
+
+
+
 
 
 # for index, name in enumerate(sr.Microphone.list_microphone_names()):
@@ -37,8 +44,7 @@ def record_and_transcribe():
         #if the text is = to exit or cancel or quit (not case sensitive) then exit the program
         if text.lower() == "exit" or text.lower() == "cancel" or text.lower() == "quit":
             print("Exiting app...")
-            quit()
-        
+            sys.exit()
         return text
     except sr.UnknownValueError:
         print("Could not understand audio")
@@ -52,7 +58,9 @@ def interact_with_mistral(prompt):
             model="mistral", messages=[{"role": "user", "content": prompt}], stream=True
         )
         for chunk in stream:
-            print(chunk["message"]["content"], end="", flush=True)
+            response = chunk["message"]["content"]
+            print(response, end="", flush=True)
+
     else:
         print("No text to send to Mistral AI.")
 
