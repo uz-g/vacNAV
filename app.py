@@ -53,7 +53,7 @@ def interact_with_ai(prompt):
     """Sends the prompt to  AI and prints the responses."""
     if prompt:
         stream = ollama.chat(
-            model="gemma", messages=[{"role": "user", "content": prompt}], stream=True
+            model="stablelm-zephyr", messages=[{"role": "user", "content": prompt}], stream=True
         )
         for chunk in stream:
             response = chunk["message"]["content"]
