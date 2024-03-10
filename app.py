@@ -11,8 +11,6 @@ import sys
 
 
 
-
-
 # for index, name in enumerate(sr.Microphone.list_microphone_names()):
 #     print("Microphone with name \"{1}\" found for `Microphone(device_index={0})`".format(index, name))
 # using index of 0 for now: sr.Microphone(device_index=0)
@@ -30,7 +28,7 @@ def record_and_transcribe():
         recognizer.adjust_for_ambient_noise(source)  # Adjust for ambient noise
         print("\nAsk your question") #print new line then speak
         try:
-            audio = recognizer.listen(source, timeout=5)  # Wait for input
+            audio = recognizer.listen(source, phrase_time_limit=5)  # Wait for input
         except sr.WaitTimeoutError:
             print("Sorry, I didn't hear anything. Please try again.")
             return None  # Indicate no audio received
@@ -51,21 +49,20 @@ def record_and_transcribe():
         return None  # Indicate failed transcription
 
 
-def interact_with_mistral(prompt):
-    """Sends the prompt to Mistral AI and prints the responses."""
+def interact_with_ai(prompt):
+    """Sends the prompt to  AI and prints the responses."""
     if prompt:
         stream = ollama.chat(
-            model="mistral", messages=[{"role": "user", "content": prompt}], stream=True
+            model="gemma", messages=[{"role": "user", "content": prompt}], stream=True
         )
         for chunk in stream:
             response = chunk["message"]["content"]
             print(response, end="", flush=True)
 
-    else:
-        print("No text to send to Mistral AI.")
 
 
 # Main program loop
 while True:
     prompt = record_and_transcribe()
-    interact_with_mistral(prompt)
+    interact_with_ai(prompt)
+
