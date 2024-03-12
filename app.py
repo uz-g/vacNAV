@@ -1,39 +1,16 @@
 import ollama
 import whisper
-import torch
 import speech_recognition as sr
-import torchaudio
-import pyttsx3
 import pyaudio
-import pyautogui
-import sys
 import string
-import struct
 import time
-import traceback
 from datetime import datetime
-import pvporcupine
-import pyaudio
-import pywifi
-from playsound import playsound
+import os
+import sys
+wakeWord = "assist"
 
 
-# for index, name in enumerate(sr.Microphone.list_microphone_names()):
-#     print("Microphone with name \"{1}\" found for `Microphone(device_index={0})`".format(index, name))
-# using index of 0 for now: sr.Microphone(device_index=0)
-
-
-def checkForHotword(text):
-    """Checks if the user wants to exit the program."""
-    if text.lower() == "exit" or text.lower() == "cancel" or text.lower() == "quit":
-        print("Exiting app...")
-        sys.exit()
-    if text.lower() == "nav":
-        break
-    time.sleep(999999999)
-
-
-def recordAndTranscribe():
+def record_and_transcribe():
     """Records audio from the microphone and returns the transcribed text."""
     recognizer = sr.Recognizer()
     with sr.Microphone() as source:
@@ -49,17 +26,17 @@ def recordAndTranscribe():
     try:
         # Perform speech recognition
         text = recognizer.recognize_google(audio)
-
+        if "exit" in text.lower() or "quit" in text.lower() or "goodbye" in text.lower() or "bye" in text.lower():
+            print("bye!")
+            sys.exit()
         print("You said:", text)
-        # if the text is = to exit or cancel or quit (not case sensitive) then exit the program
-        checkForHotword(text)
         return text
     except sr.UnknownValueError:
         print("Sorry, I didn't understand that.")
         return None
 
 
-def sendToAi(prompt):
+def send_to_ai(prompt):
     """Sends the prompt to AI and prints the responses."""
     if prompt:
         stream = ollama.chat(
@@ -72,7 +49,51 @@ def sendToAi(prompt):
             print(response, end="", flush=True)
 
 
-# Main program loop
-while True:
-    prompt = recordAndTranscribe()
-    sendToAi(prompt)
+# Function to check if the user pressed the activation key combination
+def activation_callback():
+    prompt = record_and_transcribe()
+    send_to_ai(prompt)
+
+
+def detect_wake_word():
+    recognizer = sr.Recognizer()
+    with sr.Microphone() as source:
+        print(f"\nListening for wake word '{wakeWord}'...")
+        audio = recognizer.listen(
+            source, phrase_time_limit=3
+        )  # Listen for up to 3 seconds
+
+    try:
+        detectedText = recognizer.recognize_google(audio, show_all=False)
+        print(f"Debug: detected text = {detectedText}")
+        lowerCaseWakeWord = detectedText.lower()
+        
+        
+        if wakeWord in lowerCaseWakeWord:
+            print("Wake word detected!")
+            return True
+        else:
+            if "exit" in lowerCaseWakeWord or "quit" in lowerCaseWakeWord or "goodbye" in lowerCaseWakeWord or "bye" in lowerCaseWakeWord:
+                print("Goodbye!")
+                sys.exit()
+            return False
+    except sr.UnknownValueError:
+        print("No audio detected")
+        return False
+    except sr.RequestError as error:
+        print(
+            f"Could not request results from Google Speech Recognition service; {error}"
+        )
+        return False
+
+
+while (
+    True
+):  # detect the wake word then activate the assistant, run it twice before detecting again
+    if detect_wake_word():
+        print("Assistant activated!")
+        activation_callback()
+        activation_callback()
+    else:
+        print(f"debug: '{wakeWord}' not detected")
+        continue
