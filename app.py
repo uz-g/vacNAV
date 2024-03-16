@@ -7,7 +7,16 @@ import time
 from datetime import datetime
 import os
 import sys
+import pyautogui
+import subprocess
+import webbrowser
+import validators
+import requests
+from bs4 import BeautifulSoup
+from googlesearch import search
+
 wakeWord = "assist"
+defaultBrowser = "Arc"
 
 
 def record_and_transcribe():
@@ -26,7 +35,12 @@ def record_and_transcribe():
     try:
         # Perform speech recognition
         text = recognizer.recognize_google(audio)
-        if "exit" in text.lower() or "quit" in text.lower() or "goodbye" in text.lower() or "bye" in text.lower():
+        if (
+            "exit" in text.lower()
+            or "quit" in text.lower()
+            or "goodbye" in text.lower()
+            or "bye" in text.lower()
+        ):
             print("bye!")
             sys.exit()
         print("You said:", text)
@@ -52,7 +66,33 @@ def send_to_ai(prompt):
 # Function to check if the user pressed the activation key combination
 def activation_callback():
     prompt = record_and_transcribe()
-    send_to_ai(prompt)
+    assistant_action(prompt)
+
+
+def open_app(app_name=defaultBrowser):
+    """Opens the specified app.
+
+    Args:
+        app_name (string): the name of the app to open
+    """
+    subprocess.call(["open", "-a", app_name])
+
+
+def open_website(website):
+    """Opens the specified website in the default mac browser.
+
+    Args:
+        website (string): the URL of the website to open
+    """
+
+
+
+    for results in search(website, num=10, stop=10, pause=1, safe="on", lang="en", country='us'):
+        links = results.splitlines()
+    
+    webbrowser.open_new_tab(links[0])
+
+    
 
 
 def detect_wake_word():
@@ -67,13 +107,17 @@ def detect_wake_word():
         detectedText = recognizer.recognize_google(audio, show_all=False)
         print(f"Debug: detected text = {detectedText}")
         lowerCaseWakeWord = detectedText.lower()
-        
-        
+
         if wakeWord in lowerCaseWakeWord:
             print("Wake word detected!")
             return True
         else:
-            if "exit" in lowerCaseWakeWord or "quit" in lowerCaseWakeWord or "goodbye" in lowerCaseWakeWord or "bye" in lowerCaseWakeWord:
+            if (
+                "exit" in lowerCaseWakeWord
+                or "quit" in lowerCaseWakeWord
+                or "goodbye" in lowerCaseWakeWord
+                or "bye" in lowerCaseWakeWord
+            ):
                 print("Goodbye!")
                 sys.exit()
             return False
@@ -86,14 +130,34 @@ def detect_wake_word():
         )
         return False
 
+def assistant_action(prompt):
+    """Perform the action based on the user's prompt.
 
-while (
-    True
-):  # detect the wake word then activate the assistant, run it twice before detecting again
-    if detect_wake_word():
-        print("Assistant activated!")
-        activation_callback()
-        activation_callback()
-    else:
-        print(f"debug: '{wakeWord}' not detected")
-        continue
+    Args:
+        prompt (string): the user's prompt
+    """
+   
+    if prompt:
+        if "open" in prompt:
+            if not open_app(prompt.replace("open", "").strip()):
+                open_website(prompt.replace("open", "").strip())
+        elif "search" in prompt:
+            prompt = prompt.replace("search", "")
+            open_website(prompt)
+        else:
+            send_to_ai(prompt)
+
+def main():
+    while (
+        True
+    ):  # detect the wake word then activate the assistant, run it twice before detecting again
+        if detect_wake_word():
+            print("Assistant activated!")
+            activation_callback()
+            activation_callback()
+        else:
+            print(f"debug: '{wakeWord}' not detected")
+            continue
+
+
+assistant_action("open arc")
