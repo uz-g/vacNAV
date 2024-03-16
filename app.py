@@ -15,6 +15,7 @@ import requests
 from bs4 import BeautifulSoup
 from googlesearch import search
 
+
 wakeWord = "assist"
 defaultBrowser = "Arc"
 
@@ -86,11 +87,13 @@ def open_website(website):
     """
 
 
-
-    for results in search(website, num=10, stop=10, pause=1, safe="on", lang="en", country='us'):
-        links = results.splitlines()
-    
-    webbrowser.open_new_tab(links[0])
+    results = []
+    for result in search(website, num=10, stop=10, pause=1, safe="on", lang="en", country='us'):
+        results.append(result)
+        
+    link = results[0].splitlines()
+    webbrowser.open_new_tab(link[0])
+    print(results)
 
     
 
@@ -160,4 +163,4 @@ def main():
             continue
 
 
-assistant_action("open arc")
+assistant_action("open google")
