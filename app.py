@@ -14,10 +14,17 @@ import validators
 import requests
 from bs4 import BeautifulSoup
 from googlesearch import search
+from interpreter import interpreter
 
+# Load the .env
+from dotenv import load_dotenv
+load_dotenv()
 
+interpreter.llm.api_key = os.environ.get("API_KEY")
 wakeWord = "assist"
 defaultBrowser = "Arc"
+
+interpreter.llm.model = "openai/gpt-3.5-turbo" # Tells OI to send messages in OpenAI's format
 
 
 def record_and_transcribe():
@@ -28,7 +35,7 @@ def record_and_transcribe():
         recognizer.adjust_for_ambient_noise(source)  # Adjust for ambient noise
         print("\nAsk your question")  # print new line then speak
         try:
-            audio = recognizer.listen(source, phrase_time_limit=3)  # Wait for input
+            audio = recognizer.listen(source, phrase_time_limit=5)  # Wait for input
         except sr.WaitTimeoutError:
             print("Sorry, I didn't hear anything. Please try again.")
             return None  # Indicate no audio received
@@ -54,14 +61,11 @@ def record_and_transcribe():
 def send_to_ai(prompt):
     """Sends the prompt to AI and prints the responses."""
     if prompt:
-        stream = ollama.chat(
-            model="stablelm-zephyr",
-            messages=[{"role": "user", "content": prompt}],
-            stream=True,
-        )
-        for chunk in stream:
-            response = chunk["message"]["content"]
-            print(response, end="", flush=True)
+        print(prompt)
+        interpreter.chat(prompt)
+        print("done")
+        
+
 
 
 # Function to check if the user pressed the activation key combination
@@ -150,17 +154,13 @@ def assistant_action(prompt):
         else:
             send_to_ai(prompt)
 
-def main():
-    while (
-        True
-    ):  # detect the wake word then activate the assistant, run it twice before detecting again
-        if detect_wake_word():
-            print("Assistant activated!")
-            activation_callback()
-            activation_callback()
-        else:
-            print(f"debug: '{wakeWord}' not detected")
-            continue
+# send_to_ai(record_and_transcribe())
 
 
-assistant_action("open google")
+# interpreter.system_message += """
+# Run shell commands with -y so the user doesn't have to confirm them.
+# """
+
+
+interpreter.chat("set system theme to dark mode")
+
