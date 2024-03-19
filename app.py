@@ -14,17 +14,35 @@ import validators
 import requests
 from bs4 import BeautifulSoup
 from googlesearch import search
-from interpreter import interpreter
+from interpreter import OpenInterpreter
+import computer
+from interpreter.terminal_interface.utils.count_tokens import (
+    count_messages_tokens,
+    count_tokens,
+)
+
+interpreter = OpenInterpreter()
 
 # Load the .env
 from dotenv import load_dotenv
+
+
 load_dotenv()
 
-interpreter.llm.api_key = os.environ.get("API_KEY")
 wakeWord = "assist"
 defaultBrowser = "Arc"
 
-interpreter.llm.model = "openai/gpt-3.5-turbo" # Tells OI to send messages in OpenAI's format
+interpreter.llm.api_key = os.environ.get("API_KEY")  # Set the API key
+interpreter.llm.context_window = {3000}  # Set the token limit to 3000
+interpreter.llm.max_tokens = {3000}  # Set the max tokens to 3000
+
+
+interpreter.model = "gpt-3.5-turbo"
+
+
+interpreter.system_message += """
+Run shell commands with -y so the user doesn't have to confirm them.
+"""  # Add a system message to run shell commands without confirmation
 
 
 def record_and_transcribe():
@@ -64,8 +82,6 @@ def send_to_ai(prompt):
         print(prompt)
         interpreter.chat(prompt)
         print("done")
-        
-
 
 
 # Function to check if the user pressed the activation key combination
@@ -90,16 +106,15 @@ def open_website(website):
         website (string): the URL of the website to open
     """
 
-
     results = []
-    for result in search(website, num=10, stop=10, pause=1, safe="on", lang="en", country='us'):
+    for result in search(
+        website, num=10, stop=10, pause=1, safe="on", lang="en", country="us"
+    ):
         results.append(result)
-        
+
     link = results[0].splitlines()
     webbrowser.open_new_tab(link[0])
     print(results)
-
-    
 
 
 def detect_wake_word():
@@ -137,13 +152,14 @@ def detect_wake_word():
         )
         return False
 
+
 def assistant_action(prompt):
     """Perform the action based on the user's prompt.
 
     Args:
         prompt (string): the user's prompt
     """
-   
+
     if prompt:
         if "open" in prompt:
             if not open_app(prompt.replace("open", "").strip()):
@@ -154,13 +170,8 @@ def assistant_action(prompt):
         else:
             send_to_ai(prompt)
 
+
 # send_to_ai(record_and_transcribe())
 
 
-# interpreter.system_message += """
-# Run shell commands with -y so the user doesn't have to confirm them.
-# """
-
-
-interpreter.chat("set system theme to dark mode")
-
+interpreter.chat("Hello")
