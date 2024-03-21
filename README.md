@@ -1,4 +1,9 @@
-# NAV - Voice Assisted Computer NAVigation
+<h1 align="center">✽ NAV - Voice Assisted Computer NAVigation</h1>
+
+<h4 align="center"> Created by ✽ uz-g </h4>
+
+
+[uz-g](https://github.com/uz-g/)
 
 NAV is an innovative project that aims to revolutionize the way we interact with our computers. With NAV, you can navigate and control your computer using voice commands, eliminating the need to touch your keyboard for most tasks. Whether you want to open applications, search the web, control media playback, or perform various system actions, NAV has got you covered.
 
@@ -12,7 +17,7 @@ NAV is an innovative project that aims to revolutionize the way we interact with
 
 ## Installation
 
-##### Development In Progress
+##### ⚠️ Development In Progress...
 
 ## Usage
 
@@ -35,7 +40,7 @@ NAV comes packed with a wide range of features to enhance your computer navigati
 - Media playback control
 - System volume adjustment
 - Information retreival
-##### Development In Progress...
+##### ⚠️ Development In Progress...
 
 
 NAV leverages the power of [Open Interpreter](https://docs.openinterpreter.com/getting-started/introduction), to execute code and perform complex tasks based on your voice commands. It's like having a programmable virtual assistant at your disposal.
@@ -46,7 +51,7 @@ Message me somehow.
 
 ## License
 
-##### Development In Progress...
+##### ⚠️ Development In Progress...
 
 ---
 
