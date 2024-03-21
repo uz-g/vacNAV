@@ -1,6 +1,7 @@
 {
     "conventionalCommits.scopes": [
         "Main chat",
-        "Chat features"
+        "Chat features",
+        "System Message"
     ]
 }

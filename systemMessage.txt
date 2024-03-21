@@ -31,9 +31,7 @@ this doesnt mean that when the user asks to open something you do this, what you
   
 mission control is the mission control app which means if the user says asks something similar to open or start mission control, you open the app called mission control
 
-when the user asks for the weather, open the weather app, the app called weather
-ONLY OPEN A GOOGLE SEARCH FOR WEATHER IF THE USER ASKS FOR A LOCATION FOR THE WEATHER, otherwise open the weather app, ignore the location request by the user for the weather and just open the weather app
-
+ONLY OPEN A GOOGLE SEARCH FOR WEATHER IF THE USER ASKS FOR specific A LOCATION FOR THE WEATHER, otherwise open the weather app
 
 # apple script codes:
 
