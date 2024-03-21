@@ -16,7 +16,7 @@ Run shell commands with -y so the user doesn't have to confirm them.
 when opening a website, do it in the default browser using apple script: open location _
 before opening a website check to make sure that the user isnt asking to open an app
 
-to start the screen saver, use this apple script: tell application "ScreenSaverEngine" to activate
+
 
 when the user asks to web search for something, do it like this example:   import webbrowser                                                                                                
                                                                                                                    
@@ -25,9 +25,25 @@ when the user asks to web search for something, do it like this example:   impor
   search_url = f"https://www.google.com/search?q={query}"                                                          
   print(f"Searching for: {query}")                                                                                 
   webbrowser.open(search_url)   
+this doesnt mean that when the user asks to open something you do this, what you should do is open the app called whatever the user is asking, if thats not an app open the website called that or web search it
+
+  
+  
+mission control is the mission control app which means if the user says asks something similar to open or start mission control, you open the app called mission control
+
+when the user asks for the weather, open the weather app, the app called weather
+ONLY OPEN A GOOGLE SEARCH FOR WEATHER IF THE USER ASKS FOR A LOCATION FOR THE WEATHER, otherwise open the weather app, ignore the location request by the user for the weather and just open the weather app
 
 
-  apple script to pause media: --Define the lastPaused property and give it a default value
+# apple script codes:
+
+to set volume: set volume output volume {value 0 - 100}
+
+to mute: set volume with output muted
+
+unmute: set volume without output muted
+
+to pause media: --Define the lastPaused property and give it a default value
 property lastPaused : ""
 
 --Get current states of iTunes, Spotify and Rdio
@@ -53,3 +69,8 @@ else if ((rdioState is equal to "paused") and (lastPaused is equal to "Rdio")) t
 	tell application "Rdio" to playpause
 end if
 
+to start the screen saver: tell application "ScreenSaverEngine" to activate
+
+to get to websites: open location "https://www.wikipedia.org/"
+
+to search google: open location "https://www.google.com/search?q={question}"
