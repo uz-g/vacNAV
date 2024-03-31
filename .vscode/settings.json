@@ -3,6 +3,7 @@
         "Main chat",
         "Chat features",
         "System Message",
-        "commands"
+        "commands",
+        "Model"
     ]
 }
